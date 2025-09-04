@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student List</title>
+</head>
+<body>
+{% if request.user.is_authenticated %}
+    <p>Hello, {{ request.user.username }} | <a href="{% url 'logout' %}">Logout</a></p>
+{% else %}
+    <p><a href="{% url 'login' %}">Login</a></p>
+{% endif %}
+
+    <h1>Students</h1>
+    <a href="{% url 'student_create' %}">➕ Add Student</a>
+    <hr>
+    {% if students %}
+        <ul>
+            {% for student in students %}
+                <li>
+                    <strong>{{ student.name }}</strong> (Age: {{ student.age }})
+                    <br>Profile: {{ student.profile.address }} | {{ student.profile.phone }}
+                    <br>Courses:
+                    {% for course in student.courses.all %}
+                        {{ course.name }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        No courses enrolled.
+                    {% endfor %}
+                    <br>
+                    <a href="{% url 'student_update' student.pk %}">✏️ Edit</a>
+                    <a href="{% url 'student_delete' student.pk %}">️ Delete</a>
+                </li>
+                <hr>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No students available.</p>
+    {% endif %}
+</body>
+</html>
